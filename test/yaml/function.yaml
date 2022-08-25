@@ -1,0 +1,30 @@
+cases:
+  valid_test:
+    api: function
+    summary: aaa
+    images: null
+    other_request_param:
+      value: 1
+    response_param:
+      value: 1
+
+  invalid test:
+    api: function
+    summary: bbb
+    images: null
+    other_request_param:
+      value: 1
+    response_param:
+      value: 2
+
+  valid_json_test:
+    api: function
+    summary: ccc
+    images:
+      image: image_path
+      image2: image_path2
+    other_request_param:
+      value: 1
+    response_param:
+      value: 1
+
