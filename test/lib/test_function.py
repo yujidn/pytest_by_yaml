@@ -16,16 +16,16 @@ class yaml_params:
     name: str
     api: str
     summary: str
-    images: typing.Dict
-    other_request_param: typing.Dict
-    response_param: typing.Dict
+    images: typing.List
+    request_param: typing.List
+    response_param: typing.List
 
 def yaml_load(yaml_path):
     with open(yaml_path, "r") as f:
         y = yaml.safe_load(f)
 
     cases = y['cases']
-    params = [yaml_params(**v, name=k) for k, v in cases.items()]
+    params = [yaml_params(**c) for c in cases]
     return params
 
 def yaml_tester(param: yaml_params):
@@ -33,20 +33,20 @@ def yaml_tester(param: yaml_params):
 
     request_param = {}
     if param.images is not None:
-        for k, v in param.images.items():
-            request_param[k] = v   # ここcv2.imread()やb64読み込みに置き換え
+        for img in param.images:
+            request_param[img['key']] = img['path']   # ここcv2.imread()やb64読み込みに置き換え
 
-    request_param.update(param.other_request_param)
+    for rp in param.request_param:
+        request_param[rp['key']] = rp['predict_value']
 
     ## ここを対象のapi呼び出しに置き換え
     res = function.return_value(request_param)
 
-
     print(res)
-    for k, v in param.response_param.items():
+    for rp in param.response_param:
         ## yamlのresponse paramに==, !=, >, <, is, is notなどの演算子指定をつけてもいいかも
         ## 中間とかlen()とかも書こうと思うと大変
-        assert v == res[k]
+        assert rp['predict_value'] == res[rp['key']]
 
 ## 本来はtest/__init__.pyに書く
 ##################################################################
