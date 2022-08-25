@@ -8,6 +8,8 @@ def test_value():
     post_value = 1
     assert post_value == function.return_value(post_value)
 
+
+##################################################################
 ## 本来はtest/__init__.pyに書く
 @dataclass
 class yaml_params:
@@ -26,9 +28,7 @@ def yaml_load(yaml_path):
     params = [yaml_params(**v, name=k) for k, v in cases.items()]
     return params
 
-@pytest.mark.parametrize('param', yaml_load('test/yaml/function.yaml'))
-def test_from_yaml(param: yaml_params):
-
+def yaml_tester(param: yaml_params):
     print(param.summary)
 
     request_param = {}
@@ -44,5 +44,14 @@ def test_from_yaml(param: yaml_params):
 
     print(res)
     for k, v in param.response_param.items():
-        assert res[k] == v
+        ## yamlのresponse paramに==, !=, >, <, is, is notなどの演算子指定をつけてもいいかも
+        ## 中間とかlen()とかも書こうと思うと大変
+        assert v == res[k]
+
+## 本来はtest/__init__.pyに書く
+##################################################################
+
+@pytest.mark.parametrize('param', yaml_load('test/yaml/function.yaml'))
+def test_from_yaml(param: yaml_params):
+    yaml_tester(param)
 
